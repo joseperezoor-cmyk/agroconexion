@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AGROCONEXIÓN</title>
+<style>
+body{font-family:Arial;margin:0;background:#f1f6f1;color:#263b2c}
+header{background:#185c38;color:white;padding:30px;text-align:center}
+main{max-width:900px;margin:25px auto;padding:15px}
+h2{color:#185c38}
+input,select{padding:12px;margin:5px;border:1px solid #aaa;border-radius:7px}
+.productos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.card{background:white;padding:20px;border-radius:12px;box-shadow:0 2px 8px #ccc}
+button{background:#25834c;color:white;border:0;padding:11px;border-radius:7px;cursor:pointer}
+.precio{font-size:21px;font-weight:bold;color:#185c38}
+#pedido{background:white;padding:20px;border-radius:12px;margin-top:25px}
+</style>
+</head>
+<body>
+<header>
+<h1>🌱 AGROCONEXIÓN</h1>
+<p>Del campo a tu mesa, conectando productores y compradores.</p>
+</header>
+<main>
+<h2>Encuentra productos frescos</h2>
+<p>Compra directamente a pequeños agricultores.</p>
+<input id="buscar" placeholder="Buscar productos..." oninput="mostrar()">
+<select id="categoria" onchange="mostrar()">
+<option value="">Todas las categorías</option>
+<option>Frutas</option>
+<option>Verduras</option>
+<option>Tubérculos</option>
+</select>
+<div class="productos" id="productos"></div>
+<section id="pedido">
+<h2>🧺 Mi pedido</h2>
+<div id="lista">No has agregado productos.</div>
+<h3 id="total">Total: $0</h3>
+<button onclick="alert('¡Solicitud preparada! En una versión real se enviaría al productor.')">Continuar pedido</button>
+</section>
+</main>
+<script>
+const datos=[
+["Papa criolla","Tubérculos",3500,"Finca El Porvenir"],
+["Tomate chonto","Verduras",4200,"Asociación Sembrando"],
+["Mora fresca","Frutas",6000,"Finca La Esperanza"],
+["Zanahoria","Verduras",2800,"Huerta San Miguel"],
+["Plátano","Frutas",2500,"Familia campesina"]
+];
+let pedido=[];
+function pesos(n){return "$"+n.toLocaleString("es-CO")}
+function mostrar(){
+let q=document.getElementById("buscar").value.toLowerCase();
+let c=document.getElementById("categoria").value;
+document.getElementById("productos").innerHTML=datos.filter(p=>
+p[0].toLowerCase().includes(q)&&(!c||p[1]===c)
+).map(p=>`<div class="card">
+<h3>${p[0]}</h3><p>${p[1]}</p>
+<p class="precio">${pesos(p[2])} / kg</p>
+<p>Productor: ${p[3]}</p>
+<button onclick="agregar('${p[0]}')">Agregar al pedido</button>
+</div>`).join("");
+}
+function agregar(nombre){
+let p=datos.find(x=>x[0]===nombre);
+pedido.push(p);
+actualizar();
+}
+function actualizar(){
+document.getElementById("lista").innerHTML=pedido.length?
+pedido.map(p=>p[0]+" - "+pesos(p[2])+" / kg").join("<br>"):
+"No has agregado productos.";
+document.getElementById("total").innerText="Total: "+pesos(pedido.reduce((s,p)=>s+p[2],0));
+}
+mostrar();
+</script>
+</body>
+</html>
